@@ -1,0 +1,26 @@
+.string {
+  display: flex;
+}
+
+.string__input {
+  max-width: 377px;
+}
+.string__input-block {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.string__button {
+  max-width: 133px;
+  max-height: 60px;
+  margin-left: 12px;
+}
+
+.string__circle {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 120px;
+}
