@@ -25,10 +25,10 @@ export const StringComponent: React.FC = () => {
 
 
 useEffect (()=>{
- setCircleArray(null);
- setIsCircle(false)
- console.log(input)
- input && !circleArray &&  createArrayCircle(input)
+ input &&  createArrayCircle(input)
+ if (!input){
+  setIsCircle(false)
+ } else setIsCircle(true)
 }, [input])
 
 useEffect(()=>{
@@ -38,49 +38,70 @@ useEffect(()=>{
 
 
   const buttonClick = () => {
-if (!isCircle && input){
+
     setLoader(true);
     setIsCircle(true);
-   
     setLoader(false);
-}
- 
+    circleArray && reverse(circleArray)
 
-
-   
+    
   };
 
-  const reverse = (arrCircle: TInpArray[]):TInpArray[] => {
-
+  const reverse = (arrCircle: TInpArray[]) => {
     const length = arrCircle.length;
     let start = 0;
     let end = length - 1;
-    
+    const mid = Math.floor(length/2);
+    let temp:string;
 
-    while (start < end) {
-      const temp = arrCircle[start];
-      arrCircle[start] = arrCircle[end];
-      arrCircle[end] = temp;
-      start++;
-      end--;
-    }
-    return arrCircle
+   
+ const changing = setInterval(()=>{
+  arrCircle[start].state=ElementStates.Changing
+  arrCircle[end].state=ElementStates.Changing
+  
+setCircleArray(arrCircle)
+circleArray&& renderCircle(circleArray)
+  
+setTimeout(()=>{
+temp = arrCircle[start].value;
+arrCircle[start].value = arrCircle[end].value
+arrCircle[end].value=temp
+arrCircle[start].state=ElementStates.Modified
+arrCircle[end].state=ElementStates.Modified
+start++;
+end--;
+setCircleArray(arrCircle)
+circleArray&& renderCircle(circleArray)
+},1000)
+
+if (start+1>end-1){
+    clearInterval(changing);
+     }
+
+
+
+ 
+  
+  },1500)
+   
+    
+   
   };
 
 const createArrayCircle = (input:string)=>{
  const inputArray = Array.from(input)
  if (inputArray){
-const arrayCircle:TInpArray[] = inputArray.map((el)=>{
-   if (arrayCircle)  {
-   return [...arrayCircle,{state: ElementStates.Default, value: el }]
-   }
-   if (!arrayCircle) {return {state: ElementStates.Default, value: el }}
-   
-  })}}
+let arrayCircle:any = inputArray.map((el)=>{
+      return {state: ElementStates.Default, value: el }
+   })
+ 
+  
+arrayCircle && setCircleArray(arrayCircle)}
+}
 
 const renderCircle = (arrInput:TInpArray[])=>{
    const circleArray = arrInput.map((el) => {return <Circle state={el.state} letter={el.value} />})
-  setDom(circleArray);
+setDom(circleArray)
 }
 
 
@@ -89,10 +110,7 @@ const renderCircle = (arrInput:TInpArray[])=>{
       <section className={styles["string__input-block"]}>
         <Input
           onChange={(e) => {
-            console.log(e.currentTarget.value)
-        
-         
-           setInput(e.currentTarget.value);
+            setInput(e.currentTarget.value);
           }}
           isLimitText={true}
           maxLength={11}
