@@ -1,10 +1,61 @@
 import React from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
+import { Input } from "../ui/input/input";
+import { Button } from "../ui/button/button";
+import { Circle } from "../ui/circle/circle";
+import styles from "./fibonacci-page.module.css";
+import { useState, useEffect, useRef } from "react";
+import { getFibonacci } from "../../functions/func-fibonacci";
 
 export const FibonacciPage: React.FC = () => {
+  const [valueForFib, setValueForFib] = useState<number>();
+  const [renderEl, setRenderEl] = useState<JSX.Element[] | null>();
+
+  useEffect(() => {
+    setRenderEl(null);
+  }, [valueForFib]);
+
+  const buttonClick = () => {
+    valueForFib && renderFibonacci(getFibonacci(valueForFib));
+  };
+
+  const renderFibonacci = (arr: number[]) => {
+    let i = 0;
+    const length = arr.length;
+    let arrForRender: JSX.Element[] = [];
+    const interval = setInterval(() => {
+      arrForRender.push(<Circle letter={String(arr[i])} index={i} />);
+      setRenderEl([...arrForRender]);
+
+      if (i === length - 1) {
+        clearInterval(interval);
+      }
+      i++;
+    }, 500);
+  };
+
   return (
-    <SolutionLayout title="Последовательность Фибоначчи">
-     
+    <SolutionLayout
+      extraClass={styles["fibonacci"]}
+      title="Последовательность Фибоначчи"
+    >
+      <section className={styles["fibonacci__input-block"]}>
+        <Input
+          onChange={(e) => {
+            setValueForFib(Number(e.currentTarget.value));
+          }}
+          max={19}
+          isLimitText={true}
+          type={"number"}
+          extraClass={styles["fibonacci__input"]}
+        />
+        <Button
+          onClick={buttonClick}
+          text={"Рассчитать"}
+          extraClass={styles["fibonacci__button"]}
+        />
+      </section>
+      <section className={styles["fibonacci__circle"]}>{renderEl}</section>
     </SolutionLayout>
   );
 };

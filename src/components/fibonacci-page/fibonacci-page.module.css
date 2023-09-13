@@ -1,0 +1,29 @@
+.fibonacci__input{
+    max-width: 377px;
+}
+.fibonacci__button {
+    max-width: 178px;
+    width: 100%;
+    max-height: 60px;
+}
+.fibonacci__input-block{
+    display: flex;
+    flex-direction: row;
+    gap:12px;
+    justify-content: center;
+}
+
+.fibonacci{
+    display: flex;
+   
+}
+
+.fibonacci__circle {
+display: grid;
+row-gap: 96px;
+column-gap: 10px;
+grid-template-columns: repeat(10,auto);
+    justify-content: center;
+    margin-top: 120px;
+
+}

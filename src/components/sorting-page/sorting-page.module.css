@@ -1,0 +1,33 @@
+.sorting__control-block{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.sorting__button{
+    max-width: 205px;
+    width: 100%;
+    max-height: 60px;
+    height: 100vh;
+  
+    margin-left: 12px;
+}
+.sorting__button:last-child{
+    margin-left: 80px;
+}
+.sorting__radio{
+    margin-right: 40px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.sorting__columns{
+    display: flex;
+    max-height: 340px;
+    height: 100%;
+    flex-direction: row;
+    gap: 10px;
+    align-items: flex-end;
+    justify-content: center;
+    margin-top: 48px;
+}
