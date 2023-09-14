@@ -1,5 +1,5 @@
 import { ElementStates } from "../types/element-states";
-import { TRenderElement } from "../components/sorting-page/sorting-page";
+import { TRenderElement } from "../types/render-element-column";
 export const randomArr = () => {
   const amountEl = Math.floor(Math.random() * (17 - 3)) + 3;
   let arr: TRenderElement[] = [];

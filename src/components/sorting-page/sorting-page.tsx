@@ -6,12 +6,8 @@ import { Column } from "../ui/column/column";
 import styles from "./sorting-page.module.css";
 import { Direction } from "../../types/direction";
 import { randomArr } from "../../functions/func-random-arr";
-import { ElementStates } from "../../types/element-states";
-
-export type TRenderElement = {
-  val: number;
-  type: ElementStates;
-};
+import { selectionAscending } from "../../functions/selectionAscending";
+import { TRenderElement } from "../../types/render-element-column";
 
 export const SortingPage: React.FC = () => {
   const [radioCheck, setRadioCheck] = useState<"Bubble" | "Sample" | null>(
@@ -26,12 +22,10 @@ export const SortingPage: React.FC = () => {
 
   const buttonClick = () => {
     setArray(randomArr());
-
-    console.log(columns);
   };
 
   const buttonAscending = () => {
-    array && simplingAscending(array);
+    array && selectionAscending(array, renderElements);
   };
 
   const renderElements = (arr: TRenderElement[]) => {
@@ -44,28 +38,7 @@ export const SortingPage: React.FC = () => {
       setColumns([...arrColumns]);
     }
   };
-  const simplingAscending = (arr: TRenderElement[]) => {
-    const length = arr.length;
-    let i = 0;
 
-    const intervalI = setInterval(() => {
-      let y = i + 1;
-      arr[0].type = ElementStates.Changing;
-      const intervalY = setInterval(() => {
-        arr[y].type = ElementStates.Changing;
-        renderElements(arr);
-        if (y === length - 1) {
-          clearInterval(intervalY);
-        }
-        y++;
-      }, 500);
-      renderElements(arr);
-      if (i === length - 2) {
-        clearInterval(intervalI);
-      }
-      i++;
-    }, 1000);
-  };
   return (
     <SolutionLayout title="Сортировка массива">
       <form className={styles["sorting__control-block"]}>
