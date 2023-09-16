@@ -1,33 +1,40 @@
 import { TRenderElement } from "../types/render-element-column";
 import { ElementStates } from "../types/element-states";
 import { sleep } from "./sleep";
-export const selectionAscending = async (
+import { TStateButton } from "../components/sorting-page/sorting-page";
+export const selectionDescending = async (
   arr: TRenderElement[],
-  renderFunc: (arr: TRenderElement[]) => void
+  renderFunc: (arr: TRenderElement[]) => void,
+  setStateButton: (state: TStateButton) => void
 ) => {
+  setStateButton({
+    asc: { disabled: true, isLoader: false },
+    dsc: { disabled: false, isLoader: true },
+    newArr: { disabled: true, isLoader: false },
+  });
   const length = arr.length;
-  let min: number = 0;
+  let max: number = 0;
   let temp = null;
   for (let i = 0; i < length - 1; i++) {
     arr[i].type = ElementStates.Changing;
     temp = null;
-    min = i;
+    max = i;
     await sleep(500);
     for (let y = i + 1; y < length; y++) {
       arr[y].type = ElementStates.Changing;
       renderFunc(arr);
       await sleep(500);
       console.log(y);
-      if (arr[y].val < arr[min].val) {
-        min = y;
+      if (arr[y].val > arr[max].val) {
+        max = y;
       }
 
       arr[y].type = ElementStates.Default;
       renderFunc(arr);
     }
 
-    temp = arr[min].val;
-    arr[min].val = arr[i].val;
+    temp = arr[max].val;
+    arr[max].val = arr[i].val;
     arr[i].val = temp;
     arr[i].type = ElementStates.Modified;
     renderFunc(arr);
@@ -37,4 +44,9 @@ export const selectionAscending = async (
       renderFunc(arr);
     }
   }
+  setStateButton({
+    asc: { disabled: false, isLoader: false },
+    dsc: { disabled: false, isLoader: false },
+    newArr: { disabled: false, isLoader: false },
+  });
 };

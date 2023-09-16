@@ -1,13 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { RadioInput } from "../ui/radio-input/radio-input";
 import { Button } from "../ui/button/button";
 import { Column } from "../ui/column/column";
 import styles from "./sorting-page.module.css";
 import { Direction } from "../../types/direction";
-import { randomArr } from "../../functions/func-random-arr";
-import { selectionAscending } from "../../functions/selectionAscending";
+import { randomArr } from "../../utils/func-random-arr";
+import { selectionAscending } from "../../utils/func-selection-ascending";
 import { TRenderElement } from "../../types/render-element-column";
+import { selectionDescending } from "../../utils/func-selection-descending";
+import { bubbleSorting } from "../../utils/func-bubble";
+export type TButton = {
+  disabled: boolean;
+  isLoader: boolean;
+};
+
+export type TStateButton = {
+  asc: TButton;
+  dsc: TButton;
+  newArr: TButton;
+};
 
 export const SortingPage: React.FC = () => {
   const [radioCheck, setRadioCheck] = useState<"Bubble" | "Sample" | null>(
@@ -16,16 +28,42 @@ export const SortingPage: React.FC = () => {
   const [array, setArray] = useState<TRenderElement[] | null>(null);
   const [columns, setColumns] = useState<JSX.Element[] | null>(null);
 
+  const [stateButton, setStateButton] = useState<TStateButton>({
+    asc: { disabled: false, isLoader: false },
+    dsc: { disabled: false, isLoader: false },
+    newArr: { disabled: false, isLoader: false },
+  });
+
+  const refButtonNewArr = useRef(null);
+
   useEffect(() => {
     array && renderElements(array);
   }, [array]);
+
+  const checkRadio = (type: "Bubble" | "Sample") => {
+    setRadioCheck(type);
+  };
 
   const buttonClick = () => {
     setArray(randomArr());
   };
 
   const buttonAscending = () => {
-    array && selectionAscending(array, renderElements);
+    if (radioCheck === "Sample") {
+      array && selectionAscending(array, renderElements, setStateButton);
+    }
+    if (radioCheck === "Bubble") {
+      array && bubbleSorting(array, renderElements, "Asc", setStateButton);
+    }
+  };
+
+  const buttonDescending = () => {
+    if (radioCheck === "Sample") {
+      array && selectionDescending(array, renderElements, setStateButton);
+    }
+    if (radioCheck === "Bubble") {
+      array && bubbleSorting(array, renderElements, "Desc", setStateButton);
+    }
   };
 
   const renderElements = (arr: TRenderElement[]) => {
@@ -60,16 +98,22 @@ export const SortingPage: React.FC = () => {
         />
         <Button
           onClick={buttonAscending}
+          isLoader={stateButton.asc.isLoader}
+          disabled={stateButton.asc.disabled}
           text={"По возрастанию"}
           sorting={Direction.Ascending}
           extraClass={styles["sorting__button"]}
         />
         <Button
+          isLoader={stateButton.dsc.isLoader}
+          disabled={stateButton.dsc.disabled}
           text={"По убыванию"}
+          onClick={buttonDescending}
           sorting={Direction.Descending}
           extraClass={styles["sorting__button"]}
         />
         <Button
+          disabled={stateButton.newArr.disabled}
           onClick={buttonClick}
           text={"Новый массив"}
           extraClass={styles["sorting__button"]}

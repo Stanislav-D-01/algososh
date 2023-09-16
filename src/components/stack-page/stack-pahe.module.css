@@ -1,0 +1,19 @@
+.stack__input{
+    max-width: 377px;
+}
+
+.stack__button{
+    max-width: 121px;
+
+}
+
+.stack__button:last-child{
+    margin-left: 80px;
+}
+
+.stack__input-block{
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    justify-content: center;
+}

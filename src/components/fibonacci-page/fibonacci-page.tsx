@@ -5,11 +5,12 @@ import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import styles from "./fibonacci-page.module.css";
 import { useState, useEffect, useRef } from "react";
-import { getFibonacci } from "../../functions/func-fibonacci";
+import { getFibonacci } from "../../utils/func-fibonacci";
 
 export const FibonacciPage: React.FC = () => {
   const [valueForFib, setValueForFib] = useState<number>();
   const [renderEl, setRenderEl] = useState<JSX.Element[] | null>();
+  const [stateButton, setStateButton] = useState<boolean>(false);
 
   useEffect(() => {
     setRenderEl(null);
@@ -20,6 +21,7 @@ export const FibonacciPage: React.FC = () => {
   };
 
   const renderFibonacci = (arr: number[]) => {
+    setStateButton(true);
     let i = 0;
     const length = arr.length;
     let arrForRender: JSX.Element[] = [];
@@ -29,6 +31,7 @@ export const FibonacciPage: React.FC = () => {
 
       if (i === length - 1) {
         clearInterval(interval);
+        setStateButton(false);
       }
       i++;
     }, 500);
@@ -50,6 +53,7 @@ export const FibonacciPage: React.FC = () => {
           extraClass={styles["fibonacci__input"]}
         />
         <Button
+          isLoader={stateButton}
           onClick={buttonClick}
           text={"Рассчитать"}
           extraClass={styles["fibonacci__button"]}
