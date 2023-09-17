@@ -17,3 +17,12 @@
     gap: 12px;
     justify-content: center;
 }
+
+.stack__circle{
+display: grid;
+    row-gap: 40px;
+    column-gap: 10px;
+    grid-template-columns: repeat(10, auto);
+    justify-content: center;
+    margin-top: 48px;
+}
