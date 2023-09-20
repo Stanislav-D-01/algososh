@@ -7,9 +7,10 @@ import { Stack } from "../../stack/stack";
 import styles from "./stack-pahe.module.css";
 import { ElementStates } from "../../types/element-states";
 import { sleep } from "../../utils/sleep";
+import { v4 as uuid } from "uuid";
 export type TButton = {
-  disabled: boolean;
   isLoader: boolean;
+  disabled?: boolean;
 };
 
 export type TStateButton = {
@@ -24,9 +25,9 @@ export const StackPage: React.FC = () => {
   const [stack] = useState(new Stack<string>([]));
 
   const [stateButton, setStateButton] = useState<TStateButton>({
-    add: { disabled: false, isLoader: false },
-    del: { disabled: false, isLoader: false },
-    clean: { disabled: false, isLoader: false },
+    add: { isLoader: false },
+    del: { disabled: true, isLoader: false },
+    clean: { disabled: true, isLoader: false },
   });
 
   useEffect(() => {
@@ -35,7 +36,7 @@ export const StackPage: React.FC = () => {
 
   const addInStackButton = (el: string) => {
     setStateButton({
-      add: { disabled: false, isLoader: true },
+      add: { isLoader: true },
       del: { disabled: true, isLoader: false },
       clean: { disabled: true, isLoader: false },
     });
@@ -45,7 +46,7 @@ export const StackPage: React.FC = () => {
 
   const delElInStack = async () => {
     setStateButton({
-      add: { disabled: true, isLoader: false },
+      add: { isLoader: false },
       del: { disabled: false, isLoader: true },
       clean: { disabled: true, isLoader: false },
     });
@@ -58,6 +59,11 @@ export const StackPage: React.FC = () => {
   const clearStack = () => {
     stack.clear();
     setState([...stack.elements]);
+    setStateButton({
+      add: { isLoader: false },
+      del: { disabled: true, isLoader: false },
+      clean: { disabled: true, isLoader: false },
+    });
   };
 
   const render = async (stack: string[]) => {
@@ -65,6 +71,7 @@ export const StackPage: React.FC = () => {
     const renderArr = stack.map((el, index) => {
       return (
         <Circle
+          key={uuid()}
           state={
             index === length - 1
               ? ElementStates.Changing
@@ -79,6 +86,7 @@ export const StackPage: React.FC = () => {
     await sleep(500);
     renderArr[length - 1] = (
       <Circle
+        key={uuid()}
         state={ElementStates.Default}
         letter={stack[length - 1]}
         head={"top"}
@@ -88,7 +96,7 @@ export const StackPage: React.FC = () => {
 
     setInput("");
     setStateButton({
-      add: { disabled: false, isLoader: false },
+      add: { isLoader: false },
       del: { disabled: false, isLoader: false },
       clean: { disabled: false, isLoader: false },
     });
@@ -98,7 +106,7 @@ export const StackPage: React.FC = () => {
     <SolutionLayout title="Стек">
       <section className={styles["stack__input-block"]}>
         <Input
-          value={input}
+          value={input || ""}
           onChange={(e) => setInput(e.currentTarget.value)}
           maxLength={4}
           isLimitText={true}
@@ -109,20 +117,20 @@ export const StackPage: React.FC = () => {
             input && addInStackButton(input);
           }}
           isLoader={stateButton.add.isLoader}
-          disabled={stateButton.add.disabled}
+          disabled={input ? false : true}
           text={"Добавить"}
           extraClass={styles["stack__button"]}
         />
         <Button
           isLoader={stateButton.del.isLoader}
-          disabled={stateButton.del.disabled}
+          disabled={elemRender && elemRender.length > 0 ? false : true}
           onClick={delElInStack}
           text={"Удалить"}
           extraClass={styles["stack__button"]}
         />
         <Button
           isLoader={stateButton.clean.isLoader}
-          disabled={stateButton.clean.disabled}
+          disabled={elemRender && elemRender.length > 0 ? false : true}
           onClick={clearStack}
           text={"Очистить"}
           extraClass={styles["stack__button"]}

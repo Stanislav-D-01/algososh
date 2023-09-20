@@ -8,6 +8,7 @@ import styles from "./queue-page.module.css";
 import { IQueue } from "../queue/queue";
 import { ElementStates } from "../../types/element-states";
 import { sleep } from "../../utils/sleep";
+import { v4 as uuid } from "uuid";
 type TButton = {
   disabled: boolean;
   isLoader: boolean;
@@ -52,6 +53,7 @@ export const QueuePage: React.FC = () => {
     if (arrRender && indexForAdd != null) {
       arrRender[indexForAdd] = (
         <Circle
+          key={uuid()}
           letter={""}
           index={indexForAdd}
           head={""}
@@ -85,6 +87,7 @@ export const QueuePage: React.FC = () => {
     if (arrRender && indexForDel != null && !queue.isEmpty()) {
       arrRender[indexForDel] = (
         <Circle
+          key={uuid()}
           letter={queue.elements()[indexForDel]!}
           index={indexForDel}
           head={"head"}
@@ -119,6 +122,7 @@ export const QueuePage: React.FC = () => {
     for (let i = 0; i < length; i++) {
       arrayElements.push(
         <Circle
+          key={uuid()}
           letter={elements[i] ? elements[i]! : ""}
           index={i}
           head={
@@ -138,7 +142,7 @@ export const QueuePage: React.FC = () => {
       <section className={styles["queue__input-block"]}>
         <Input
           onChange={(e) => setInput(e.currentTarget.value)}
-          value={input}
+          value={input || ""}
           maxLength={4}
           isLimitText={true}
           extraClass={styles["queue__input"]}
@@ -146,14 +150,22 @@ export const QueuePage: React.FC = () => {
         <Button
           onClick={() => input && addElement(input)}
           isLoader={stateButton.add.isLoader}
-          disabled={stateButton.add.disabled}
+          disabled={
+            input && queue && queue.tailValue() !== queue.sizeValue()
+              ? false
+              : true
+          }
           text={"Добавить"}
           extraClass={styles["queue__button"]}
         />
         <Button
           onClick={delElement}
           isLoader={stateButton.del.isLoader}
-          disabled={stateButton.del.disabled}
+          disabled={
+            queue && queue.lengthValue() > 0 && !stateButton.del.disabled
+              ? false
+              : true
+          }
           text={"Удалить"}
           extraClass={styles["queue__button"]}
         />

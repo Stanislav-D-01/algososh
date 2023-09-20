@@ -6,6 +6,7 @@ import { Circle } from "../ui/circle/circle";
 import styles from "./fibonacci-page.module.css";
 import { useState, useEffect, useRef } from "react";
 import { getFibonacci } from "../../utils/func-fibonacci";
+import { v4 as uuid } from "uuid";
 
 export const FibonacciPage: React.FC = () => {
   const [valueForFib, setValueForFib] = useState<number>();
@@ -28,7 +29,9 @@ export const FibonacciPage: React.FC = () => {
     const length = arr.length;
     let arrForRender: JSX.Element[] = [];
     const interval = setInterval(() => {
-      arrForRender.push(<Circle letter={String(arr[i])} index={i} />);
+      arrForRender.push(
+        <Circle key={uuid()} letter={String(arr[i])} index={i} />
+      );
       setRenderEl([...arrForRender]);
 
       if (i === length - 1) {
@@ -46,6 +49,7 @@ export const FibonacciPage: React.FC = () => {
     >
       <section className={styles["fibonacci__input-block"]}>
         <Input
+          value={valueForFib || ""}
           onChange={(e) => {
             setValueForFib(Number(e.currentTarget.value));
           }}
@@ -55,6 +59,7 @@ export const FibonacciPage: React.FC = () => {
           extraClass={styles["fibonacci__input"]}
         />
         <Button
+          disabled={valueForFib && valueForFib < 20 ? false : true}
           isLoader={stateButton}
           onClick={buttonClick}
           text={"Рассчитать"}

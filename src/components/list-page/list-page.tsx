@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, Fragment } from "react";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { Input } from "../ui/input/input";
 import { Button } from "../ui/button/button";
@@ -9,6 +9,7 @@ import { ArrowIcon } from "../ui/icons/arrow-icon";
 import { randomArr } from "../../utils/func-random-arr";
 import { ElementStates } from "../../types/element-states";
 import { sleep } from "../../utils/sleep";
+import { v4 as uuid } from "uuid";
 
 type TButton = {
   disabled: boolean;
@@ -27,7 +28,7 @@ type TStateButton = {
 export const ListPage: React.FC = () => {
   const [list] = useState(new LinkedList<string>());
   const [input, setInput] = useState<string>();
-  const [inputIndex, setInputIndex] = useState<number>();
+  const [inputIndex, setInputIndex] = useState<number>(0);
   const [renderArr, setRenderArr] = useState<JSX.Element[]>();
   const [stateButton, setStateButton] = useState<TStateButton>({
     addHead: { disabled: true, isLoader: false },
@@ -45,56 +46,8 @@ export const ListPage: React.FC = () => {
     });
     render(list);
   }, []);
-  const inputRef = useRef<any>();
 
-  useEffect(() => {
-    if (input && inputIndex && inputIndex >= 0) {
-      setStateButton({
-        addHead: { disabled: false, isLoader: false },
-        delHead: { disabled: false, isLoader: false },
-        addTail: { disabled: false, isLoader: false },
-        delTail: { disabled: false, isLoader: false },
-        addIndex: { disabled: false, isLoader: false },
-        delIndex: { disabled: false, isLoader: false },
-      });
-      return;
-    }
-    if (!input && inputIndex! >= 0) {
-      setStateButton({
-        ...stateButton,
-        delIndex: { disabled: false, isLoader: false },
-        addIndex: { disabled: true, isLoader: false },
-        addHead: { disabled: true, isLoader: false },
-        addTail: { disabled: true, isLoader: false },
-      });
-      return;
-    }
-    if (input) {
-      setStateButton({
-        ...stateButton,
-        addHead: { disabled: false, isLoader: false },
-        addTail: { disabled: false, isLoader: false },
-      });
-      return;
-    }
-
-    if (!input) {
-      setStateButton({
-        ...stateButton,
-        addHead: { disabled: true, isLoader: false },
-        addTail: { disabled: true, isLoader: false },
-      });
-      return;
-    }
-
-    if (inputIndex) {
-      setStateButton({
-        ...stateButton,
-        delIndex: { disabled: false, isLoader: false },
-      });
-      return;
-    }
-  }, [input, inputIndex]);
+  useEffect(() => {}, [input, inputIndex]);
 
   const addInTail = async (input: string) => {
     setStateButton({
@@ -109,6 +62,11 @@ export const ListPage: React.FC = () => {
     await sleep(1000);
     render(list);
     setInput("");
+    setStateButton({
+      ...stateButton,
+      addTail: { disabled: false, isLoader: false },
+      addHead: { disabled: false, isLoader: false },
+    });
   };
 
   const addInHead = async (input: string) => {
@@ -124,6 +82,11 @@ export const ListPage: React.FC = () => {
     await sleep(1000);
     render(list);
     setInput("");
+    setStateButton({
+      ...stateButton,
+      addTail: { disabled: false, isLoader: false },
+      addHead: { disabled: false, isLoader: false },
+    });
   };
 
   const addByIndex = async (index: number, input: string) => {
@@ -226,12 +189,18 @@ export const ListPage: React.FC = () => {
     if (index === arrayJSX.length - 1) {
       arrayJSX[index] = (
         <Circle
+          key={uuid()}
           index={index}
           tail={list.toArray()[index].tail}
           letter={list.toArray()[index].val}
           state={ElementStates.Default}
           head={
-            <Circle isSmall state={ElementStates.Changing} letter={value} />
+            <Circle
+              key={uuid()}
+              isSmall
+              state={ElementStates.Changing}
+              letter={value}
+            />
           }
         />
       );
@@ -239,15 +208,21 @@ export const ListPage: React.FC = () => {
       arrayJSX[index] = (
         <>
           <Circle
+            key={uuid()}
             index={index}
             tail={list.toArray()[index].tail}
             letter={list.toArray()[index].val}
             state={ElementStates.Default}
             head={
-              <Circle isSmall state={ElementStates.Changing} letter={value} />
+              <Circle
+                key={uuid()}
+                isSmall
+                state={ElementStates.Changing}
+                letter={value}
+              />
             }
           />
-          <ArrowIcon />
+          <ArrowIcon key={uuid()} />
         </>
       );
     }
@@ -263,9 +238,11 @@ export const ListPage: React.FC = () => {
     if (index === arrayJSX.length - 1) {
       arrayJSX[index] = (
         <Circle
+          key={uuid()}
           index={index}
           tail={
             <Circle
+              key={uuid()}
               isSmall
               state={ElementStates.Changing}
               letter={list.toArray()[index].val}
@@ -278,11 +255,13 @@ export const ListPage: React.FC = () => {
       );
     } else {
       arrayJSX[index] = (
-        <>
+        <Fragment key={uuid()}>
           <Circle
+            key={uuid()}
             index={index}
             tail={
               <Circle
+                key={uuid()}
                 isSmall
                 state={ElementStates.Changing}
                 letter={list.toArray()[index].val}
@@ -292,8 +271,8 @@ export const ListPage: React.FC = () => {
             state={ElementStates.Default}
             head={list.toArray()[index].head}
           />
-          <ArrowIcon />
-        </>
+          <ArrowIcon key={uuid()} />
+        </Fragment>
       );
     }
     setRenderArr([...arrayJSX]);
@@ -311,8 +290,9 @@ export const ListPage: React.FC = () => {
     for (let i = 0; i <= endElement; i++) {
       for (let y = 0; y <= index; y++) {
         arrayJSX[y] = (
-          <>
+          <Fragment key={uuid()}>
             <Circle
+              key={uuid()}
               index={y}
               tail={list.toArray()[y].tail}
               letter={list.toArray()[y].val}
@@ -320,6 +300,7 @@ export const ListPage: React.FC = () => {
               head={
                 value && y === i ? (
                   <Circle
+                    key={uuid()}
                     isSmall
                     state={ElementStates.Changing}
                     letter={value}
@@ -331,8 +312,8 @@ export const ListPage: React.FC = () => {
                 )
               }
             />
-            {y !== length - 1 && <ArrowIcon />}
-          </>
+            {y !== length - 1 && <ArrowIcon key={uuid()} />}
+          </Fragment>
         );
       }
       setRenderArr([...arrayJSX]);
@@ -359,24 +340,24 @@ export const ListPage: React.FC = () => {
     const arrRender = arr.map((el, index) => {
       if (index === arr.length - 1) {
         return (
-          <>
-            <Circle
-              head={index === 0 ? "head" : ""}
-              tail={index === arr.length - 1 ? "tail" : ""}
-              index={index}
-              letter={el}
-              state={
-                indexForSelect !== null && index === indexForSelect
-                  ? ElementStates.Modified
-                  : ElementStates.Default
-              }
-            />
-          </>
+          <Circle
+            key={uuid()}
+            head={index === 0 ? "head" : ""}
+            tail={index === arr.length - 1 ? "tail" : ""}
+            index={index}
+            letter={el}
+            state={
+              indexForSelect !== null && index === indexForSelect
+                ? ElementStates.Modified
+                : ElementStates.Default
+            }
+          />
         );
       } else {
         return (
-          <>
+          <Fragment key={uuid()}>
             <Circle
+              key={uuid()}
               head={index === 0 ? "head" : ""}
               tail={index === arr.length - 1 ? "tail" : ""}
               index={index}
@@ -387,10 +368,10 @@ export const ListPage: React.FC = () => {
                   : ElementStates.Default
               }
             />
-            <div className={styles["list__arrow-icon"]}>
-              <ArrowIcon />
+            <div key={uuid()} className={styles["list__arrow-icon"]}>
+              <ArrowIcon key={uuid()} />
             </div>
-          </>
+          </Fragment>
         );
       }
     });
@@ -401,7 +382,7 @@ export const ListPage: React.FC = () => {
     <SolutionLayout title="Связный список">
       <section className={styles["list__block-control"]}>
         <Input
-          value={input}
+          value={input || ""}
           onChange={(e) => setInput(e.currentTarget.value)}
           isLimitText={true}
           maxLength={4}
@@ -409,42 +390,42 @@ export const ListPage: React.FC = () => {
           extraClass={styles["list__input"]}
         />
         <Button
-          disabled={stateButton.addHead.disabled}
+          disabled={input ? false : true}
           isLoader={stateButton.addHead.isLoader}
           onClick={() => input && addInHead(input)}
           text={"Добавить в head"}
           extraClass={styles["list__button_type_mini"]}
         />
         <Button
-          disabled={stateButton.addTail.disabled}
+          disabled={input ? false : true}
           isLoader={stateButton.addTail.isLoader}
           onClick={() => input && addInTail(input)}
           text={"Добавить в tail"}
           extraClass={styles["list__button_type_mini"]}
         />
         <Button
-          disabled={stateButton.delHead.disabled}
+          disabled={renderArr && renderArr.length > 0 ? false : true}
           isLoader={stateButton.delHead.isLoader}
           onClick={delFromHead}
           text={"Удалить из head"}
           extraClass={styles["list__button_type_mini"]}
         />
         <Button
-          disabled={stateButton.delTail.disabled}
+          disabled={renderArr && renderArr.length > 0 ? false : true}
           isLoader={stateButton.delTail.isLoader}
           onClick={delFromTail}
           text={"Удалить из tail"}
           extraClass={styles["list__button_type_mini"]}
         />
         <Input
-          value={inputIndex}
+          value={inputIndex || ""}
           type="number"
           onChange={(e) => setInputIndex(Number(e.currentTarget.value))}
           placeholder="Введите индекс"
           extraClass={styles["list__input"]}
         />
         <Button
-          disabled={stateButton.addIndex.disabled}
+          disabled={input ? false : true}
           isLoader={stateButton.addIndex.isLoader}
           onClick={() => {
             input && inputIndex && addByIndex(inputIndex, input);
@@ -456,7 +437,7 @@ export const ListPage: React.FC = () => {
           extraClass={`${styles["list__button_type_big"]} `}
         />
         <Button
-          disabled={stateButton.delIndex.disabled}
+          disabled={false}
           isLoader={stateButton.delIndex.isLoader}
           onClick={() => {
             inputIndex && delByIndex(Number(inputIndex));

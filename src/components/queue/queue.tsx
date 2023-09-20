@@ -74,6 +74,9 @@ export class Queue<T> implements IQueue<T> {
   sizeValue() {
     return this.size;
   }
+  lengthValue() {
+    return this.length;
+  }
 
   isEmpty = () => this.length === 0;
 }

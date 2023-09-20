@@ -16,7 +16,6 @@ type TArray<T> = {
 export interface ILinkedList<T> {
   append: (element: T) => void;
   getSize: () => number;
-  print: () => void;
   getHead: () => LinkedListNode<T> | null;
   toArray: () => TArray<T>[];
 }
@@ -203,14 +202,5 @@ export class LinkedList<T> implements ILinkedList<T> {
         tail: "tail",
       });
     return array;
-  }
-  print() {
-    let curr = this.head;
-    let res = "";
-    while (curr) {
-      res += `${curr.value} `;
-      curr = curr.next;
-    }
-    console.log(res);
   }
 }

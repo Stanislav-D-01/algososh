@@ -10,6 +10,8 @@ import { selectionAscending } from "../../utils/func-selection-ascending";
 import { TRenderElement } from "../../types/render-element-column";
 import { selectionDescending } from "../../utils/func-selection-descending";
 import { bubbleSorting } from "../../utils/func-bubble";
+import { v4 as uuid } from "uuid";
+
 export type TButton = {
   disabled: boolean;
   isLoader: boolean;
@@ -34,7 +36,9 @@ export const SortingPage: React.FC = () => {
     newArr: { disabled: false, isLoader: false },
   });
 
-  const refButtonNewArr = useRef(null);
+  useEffect(() => {
+    setArray(randomArr(3, 17, 0, 100));
+  }, []);
 
   useEffect(() => {
     array && renderElements(array);
@@ -71,7 +75,7 @@ export const SortingPage: React.FC = () => {
       const length = arr.length;
       let arrColumns: JSX.Element[] = [];
       arr.map((el) => {
-        arrColumns.push(<Column state={el.type} index={el.val} />);
+        arrColumns.push(<Column key={uuid()} state={el.type} index={el.val} />);
       });
       setColumns([...arrColumns]);
     }

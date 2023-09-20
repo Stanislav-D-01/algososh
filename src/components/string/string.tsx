@@ -6,6 +6,7 @@ import styles from "./string.module.css";
 import { useState } from "react";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
+import { v4 as uuidv4 } from "uuid";
 
 type TInpArray = {
   state: ElementStates;
@@ -82,7 +83,7 @@ export const StringComponent: React.FC = () => {
 
   const renderCircle = (arrInput: TInpArray[]) => {
     const circleArray = arrInput.map((el) => {
-      return <Circle state={el.state} letter={el.value} />;
+      return <Circle key={uuidv4()} state={el.state} letter={el.value} />;
     });
     setDom(circleArray);
   };
@@ -91,6 +92,7 @@ export const StringComponent: React.FC = () => {
     <SolutionLayout extraClass={styles["string"]} title="Строка">
       <section className={styles["string__input-block"]}>
         <Input
+          value={input || ""}
           onChange={(e) => {
             setInput(e.currentTarget.value);
           }}
@@ -99,6 +101,7 @@ export const StringComponent: React.FC = () => {
           extraClass={styles["string__input"]}
         />
         <Button
+          disabled={input ? false : true}
           onClick={() => buttonClick()}
           isLoader={loader}
           text="Развернуть"
