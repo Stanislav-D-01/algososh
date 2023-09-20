@@ -1,0 +1,39 @@
+.list__block-control{
+    display: grid;
+    grid-template-columns: repeat(5, max-content);
+    grid-template-rows: repeat(2,1fr);
+    row-gap: 12px;
+    column-gap: 12px;
+    justify-content: center;
+
+}
+
+.list__input{
+max-width: 204px;
+
+}
+
+.list__button_type_mini{
+    max-width: 175px;
+    width: 100vw;
+   
+}
+
+.list__button_type_big {
+    max-width: 362px;
+    width: 100vw;
+    grid-column-end: span 2
+}
+
+.list__circle{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 90px;
+
+}
+
+.list__arrow-icon{
+  
+}

@@ -6,6 +6,7 @@ export interface IQueue<T> {
   headValue: () => number;
   tailValue: () => number;
   sizeValue: () => number;
+  isEmpty: () => boolean;
 }
 
 export class Queue<T> implements IQueue<T> {
@@ -22,12 +23,18 @@ export class Queue<T> implements IQueue<T> {
 
   enqueue = (item: T) => {
     if (this.tail === this.size) {
-      throw new Error("Maximum length exceeded");
+      return;
     }
-
-    this.container[this.tail % this.size] = item;
-    this.tail++;
-    this.length++;
+    if (this.container[this.head] === null && this.tail !== 0) {
+      this.container[this.tail % this.size] = item;
+      this.tail++;
+      this.length++;
+      this.head++;
+    } else {
+      this.container[this.tail % this.size] = item;
+      this.tail++;
+      this.length++;
+    }
   };
 
   dequeue = () => {
@@ -36,7 +43,10 @@ export class Queue<T> implements IQueue<T> {
     }
 
     this.container[this.head] = null;
-    this.head++;
+    if (this.head !== this.size - 1 && this.head !== this.tail - 1) {
+      console.log(this.head);
+      this.head++;
+    }
     this.length--;
   };
 

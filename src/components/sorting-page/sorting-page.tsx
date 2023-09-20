@@ -45,7 +45,7 @@ export const SortingPage: React.FC = () => {
   };
 
   const buttonClick = () => {
-    setArray(randomArr());
+    setArray(randomArr(3, 17, 0, 100));
   };
 
   const buttonAscending = () => {

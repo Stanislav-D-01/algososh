@@ -8,11 +8,26 @@ import styles from "./queue-page.module.css";
 import { IQueue } from "../queue/queue";
 import { ElementStates } from "../../types/element-states";
 import { sleep } from "../../utils/sleep";
+type TButton = {
+  disabled: boolean;
+  isLoader: boolean;
+};
+
+type TStateButton = {
+  add: TButton;
+  del: TButton;
+  clean: TButton;
+};
 export const QueuePage: React.FC = () => {
   const [queue] = useState(new Queue<string>(7));
   const [state, setState] = useState<(string | null)[]>([]);
   const [elemRender, setElemRender] = useState<JSX.Element[]>();
   const [input, setInput] = useState<string>();
+  const [stateButton, setStateButton] = useState<TStateButton>({
+    add: { disabled: false, isLoader: false },
+    del: { disabled: false, isLoader: false },
+    clean: { disabled: false, isLoader: false },
+  });
 
   useEffect(() => {
     queue.elements() && setState([...queue.elements()]);
@@ -22,25 +37,75 @@ export const QueuePage: React.FC = () => {
     queue.elements() && render(queue);
   }, [state]);
 
-  const addElement = async(item: string) => {
+  const addElement = async (item: string) => {
+    setInput("");
+    setStateButton({
+      add: { disabled: false, isLoader: true },
+      del: { disabled: true, isLoader: false },
+      clean: { disabled: true, isLoader: false },
+    });
     const indexForAdd =
-      queue.tailValue() !== queue.sizeValue( )
-        ? queue.tailValue() + 1
-        : queue.tailValue();
+      queue.tailValue() !== queue.sizeValue() ? queue.tailValue() : null;
 
-   const arrRender =  [...elemRender]
-    arrRender&&arrRender[indexForAdd] = <Circle index={indexForAdd} head={queue.headValue() ===indexForAdd  ? "head" : ""}
-          tail={queue.tailValue()-1 === indexForAdd  ? "tail" : ""}
-          state={ElementStates.Modified}
-        />;
-    sleep(500);
-    
+    const arrRender = elemRender && [...elemRender];
+
+    if (arrRender && indexForAdd != null) {
+      arrRender[indexForAdd] = (
+        <Circle
+          letter={""}
+          index={indexForAdd}
+          head={""}
+          tail={""}
+          state={ElementStates.Changing}
+        />
+      );
+    }
+    arrRender && setElemRender([...arrRender]);
+    await sleep(500);
+
     queue.enqueue(item);
     setState([...queue.elements()]);
+    setStateButton({
+      add: { disabled: false, isLoader: false },
+      del: { disabled: false, isLoader: false },
+      clean: { disabled: false, isLoader: false },
+    });
   };
 
-  const delElement = () => {
+  const delElement = async () => {
+    setStateButton({
+      add: { disabled: true, isLoader: false },
+      del: { disabled: false, isLoader: true },
+      clean: { disabled: true, isLoader: false },
+    });
+    const indexForDel =
+      queue.headValue()! < queue.sizeValue() ? queue.headValue() : null;
+    const arrRender = elemRender && [...elemRender];
+
+    if (arrRender && indexForDel != null && !queue.isEmpty()) {
+      arrRender[indexForDel] = (
+        <Circle
+          letter={queue.elements()[indexForDel]!}
+          index={indexForDel}
+          head={"head"}
+          tail={indexForDel === queue.tailValue() - 1 ? "tail" : ""}
+          state={ElementStates.Changing}
+        />
+      );
+    }
+    arrRender && setElemRender([...arrRender]);
+    await sleep(500);
     queue.dequeue();
+    setState([...queue.elements()]);
+    setStateButton({
+      add: { disabled: false, isLoader: false },
+      del: { disabled: false, isLoader: false },
+      clean: { disabled: false, isLoader: false },
+    });
+  };
+
+  const cleanQueue = () => {
+    queue.clear();
     setState([...queue.elements()]);
   };
 
@@ -56,7 +121,9 @@ export const QueuePage: React.FC = () => {
         <Circle
           letter={elements[i] ? elements[i]! : ""}
           index={i}
-          head={i === head && elements[0] !== undefined ? "head" : ""}
+          head={
+            i === head && elements[0] !== undefined && tail > 0 ? "head" : ""
+          }
           tail={i === tail - 1 && elements[0] !== undefined ? "tail" : ""}
           state={ElementStates.Default}
         />
@@ -78,15 +145,25 @@ export const QueuePage: React.FC = () => {
         />
         <Button
           onClick={() => input && addElement(input)}
+          isLoader={stateButton.add.isLoader}
+          disabled={stateButton.add.disabled}
           text={"Добавить"}
           extraClass={styles["queue__button"]}
         />
         <Button
           onClick={delElement}
+          isLoader={stateButton.del.isLoader}
+          disabled={stateButton.del.disabled}
           text={"Удалить"}
           extraClass={styles["queue__button"]}
         />
-        <Button text={"Очистить"} extraClass={styles["queue__button"]} />
+        <Button
+          onClick={cleanQueue}
+          isLoader={stateButton.clean.isLoader}
+          disabled={stateButton.clean.disabled}
+          text={"Очистить"}
+          extraClass={styles["queue__button"]}
+        />
       </section>
       <section className={styles["queue__circle"]}> {elemRender} </section>
     </SolutionLayout>

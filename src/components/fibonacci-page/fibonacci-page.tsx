@@ -17,7 +17,9 @@ export const FibonacciPage: React.FC = () => {
   }, [valueForFib]);
 
   const buttonClick = () => {
-    valueForFib && renderFibonacci(getFibonacci(valueForFib));
+    if (valueForFib && valueForFib <= 19) {
+      renderFibonacci(getFibonacci(valueForFib));
+    }
   };
 
   const renderFibonacci = (arr: number[]) => {
