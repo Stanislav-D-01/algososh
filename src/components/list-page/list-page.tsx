@@ -206,7 +206,7 @@ export const ListPage: React.FC = () => {
       );
     } else {
       arrayJSX[index] = (
-        <>
+        <Fragment key={uuid()}>
           <Circle
             key={uuid()}
             index={index}
@@ -223,7 +223,7 @@ export const ListPage: React.FC = () => {
             }
           />
           <ArrowIcon key={uuid()} />
-        </>
+        </Fragment>
       );
     }
     setRenderArr([...arrayJSX]);
@@ -418,14 +418,18 @@ export const ListPage: React.FC = () => {
           extraClass={styles["list__button_type_mini"]}
         />
         <Input
-          value={inputIndex || ""}
+          value={inputIndex || "0"}
           type="number"
           onChange={(e) => setInputIndex(Number(e.currentTarget.value))}
           placeholder="Введите индекс"
           extraClass={styles["list__input"]}
         />
         <Button
-          disabled={input ? false : true}
+          disabled={
+            input && inputIndex >= 0 && inputIndex < list.getSize()
+              ? false
+              : true
+          }
           isLoader={stateButton.addIndex.isLoader}
           onClick={() => {
             input && inputIndex && addByIndex(inputIndex, input);
@@ -437,7 +441,9 @@ export const ListPage: React.FC = () => {
           extraClass={`${styles["list__button_type_big"]} `}
         />
         <Button
-          disabled={false}
+          disabled={
+            inputIndex >= 0 && inputIndex < list.getSize() ? false : true
+          }
           isLoader={stateButton.delIndex.isLoader}
           onClick={() => {
             inputIndex && delByIndex(Number(inputIndex));
