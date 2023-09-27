@@ -1,0 +1,26 @@
+.queue__input-block{
+    display: flex;
+    flex-direction: row;;
+    justify-content: center;
+    margin-bottom: 52px;
+}
+
+.queue__input{
+    max-width: 377px;
+}
+.queue__button {
+    max-width: 121px;
+    margin-left: 12px;
+}
+.queue__button:last-child{
+margin-left: 80px;
+}
+
+.queue__circle{
+    display: grid;
+        row-gap: 40px;
+        column-gap: 10px;
+        grid-template-columns: repeat(10, auto);
+        justify-content: center;
+        margin-top: 68px;
+}
