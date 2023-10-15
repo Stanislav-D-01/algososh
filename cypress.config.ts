@@ -13,4 +13,9 @@ export default defineConfig({
       bundler: "webpack",
     },
   },
+  env: {
+    "cypress-react-selector": {
+      root: "#root",
+    },
+  },
 });

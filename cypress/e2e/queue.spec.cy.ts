@@ -1,196 +1,129 @@
+import "cypress-react-selector";
+
 describe("тестирование очереди", () => {
-  it("проверка если инпут пуст, кнопка не доступна", () => {
+  beforeEach(() => {
     cy.visit("http://localhost:3000/queue");
-    cy.get("input").should("not.have.text");
-    cy.get(".queue-page_queue__input-block__v3ccv > :nth-child(2)").should(
-      "be.disabled",
-    );
+    cy.waitForReact();
+    cy.get('input[placeholder="Введите текст"]').as("inputVal");
+    cy.get("button").contains("Добавить").parent().as("buttonAdd");
+    cy.get("button").contains("Удалить").parent().as("buttonDel");
+    cy.get("button").contains("Очистить").parent().as("buttonClear");
+  });
+  it("проверка если инпут пуст, кнопка не доступна", () => {
+    cy.get("@inputVal").should("not.have.text");
+    cy.get("@buttonAdd").should("be.disabled");
   });
   it("проверка добавление элеметов в очередь", () => {
-    cy.visit("http://localhost:3000/queue");
-    cy.get(":nth-child(1) > .circle_circle__78fES")
-      .as("oneCircle")
-      .should("have.css", "border", "4px solid rgb(0, 50, 255)");
-
-    cy.get("input").type("A");
-    cy.get(".queue-page_queue__input-block__v3ccv > :nth-child(2)")
-      .as("buttonAdd")
-      .click();
-    cy.get("@oneCircle").should(
-      "have.css",
-      "border",
-      "4px solid rgb(210, 82, 225)",
-    );
-    cy.get("@oneCircle").contains("A");
-
-    cy.get(".queue-page_queue__circle__9KPM8 > :nth-child(1)")
-      .as("oneContainer")
-      .contains("head");
-    cy.get("@oneContainer").contains("tail");
-    cy.wait(500);
-
-    cy.get(":nth-child(2) > .circle_circle__78fES")
-      .as("twoCircle")
-      .should("have.css", "border", "4px solid rgb(0, 50, 255)");
-    cy.get("input").type("B2");
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.get("@inputVal").type("A");
     cy.get("@buttonAdd").click();
-    cy.get("@twoCircle").should(
-      "have.css",
-      "border",
-      "4px solid rgb(210, 82, 225)",
-    );
-    cy.get("@oneCircle").contains("A");
-
-    cy.get(".queue-page_queue__circle__9KPM8 > :nth-child(2)")
-      .as("twoContainer")
-      .contains("B2");
-    cy.get("@twoCircle").should(
-      "have.css",
-      "border",
-      "4px solid rgb(0, 50, 255)",
-    );
-    cy.get("@oneContainer").contains("tail").should("not.exist");
-    cy.get("@twoContainer").contains("tail").should("exist");
-    cy.get("@oneContainer").contains("head");
-
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "changing");
     cy.wait(500);
-    cy.get(":nth-child(3) > .circle_circle__78fES")
-      .as("threeCircle")
-      .should("have.css", "border", "4px solid rgb(0, 50, 255)");
-    cy.get("input").type("C3");
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "A");
+    cy.getReact("Circle").nthNode(0).getProps("head").should("eq", "head");
+    cy.getReact("Circle").nthNode(0).getProps("tail").should("eq", "tail");
+    cy.get("@inputVal").type("B2");
     cy.get("@buttonAdd").click();
-    cy.get("@threeCircle").should(
-      "have.css",
-      "border",
-      "4px solid rgb(210, 82, 225)",
-    );
-    cy.get("@oneCircle").contains("A");
-    cy.get("@twoCircle").contains("B2");
-    cy.get(".queue-page_queue__circle__9KPM8 > :nth-child(3)")
-      .as("threeContainer")
-      .contains("C3");
-    cy.get("@threeCircle").should(
-      "have.css",
-      "border",
-      "4px solid rgb(0, 50, 255)",
-    );
-    cy.get("@oneContainer").contains("tail").should("not.exist");
-    cy.get("@twoContainer").contains("tail").should("not.exist");
-    cy.get("@threeContainer").contains("tail").should("exist");
-    cy.get("@oneContainer").contains("head");
+
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "changing");
+    cy.wait(500);
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.wait(500);
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "A");
+    cy.getReact("Circle").nthNode(0).getProps("head").should("eq", "head");
+    cy.getReact("Circle").nthNode(0).getProps("tail").should("eq", "");
+    cy.getReact("Circle").nthNode(1).getProps("letter").should("eq", "B2");
+    cy.getReact("Circle").nthNode(1).getProps("head").should("eq", "");
+    cy.getReact("Circle").nthNode(1).getProps("tail").should("eq", "tail");
+
+    cy.get("@inputVal").type("C3");
+    cy.get("@buttonAdd").click();
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "changing");
+    cy.wait(500);
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "default");
+    cy.wait(500);
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "A");
+    cy.getReact("Circle").nthNode(0).getProps("head").should("eq", "head");
+    cy.getReact("Circle").nthNode(0).getProps("tail").should("eq", "");
+    cy.getReact("Circle").nthNode(1).getProps("letter").should("eq", "B2");
+    cy.getReact("Circle").nthNode(1).getProps("head").should("eq", "");
+    cy.getReact("Circle").nthNode(1).getProps("tail").should("eq", "");
+    cy.getReact("Circle").nthNode(2).getProps("letter").should("eq", "C3");
+    cy.getReact("Circle").nthNode(2).getProps("head").should("eq", "");
+    cy.getReact("Circle").nthNode(2).getProps("tail").should("eq", "tail");
   });
 
   it("проверка правильности удаление элементов", () => {
-    cy.visit("http://localhost:3000/queue");
-    cy.get("input").type("1");
-    cy.get(".queue-page_queue__input-block__v3ccv > :nth-child(2)")
-      .as("buttonAdd")
-      .click();
-    cy.wait(500);
-    cy.get("input").type("2");
+    cy.get("@inputVal").type("A1");
     cy.get("@buttonAdd").click();
-    cy.wait(500);
-    cy.get("input").type("3");
+    cy.wait(1000);
+    cy.get("@inputVal").type("B2");
     cy.get("@buttonAdd").click();
-    cy.wait(500);
-    cy.get("input").type("4");
+    cy.wait(1000);
+    cy.get("@inputVal").type("C3");
     cy.get("@buttonAdd").click();
+    cy.wait(1000);
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "default");
+    cy.get("@buttonDel").click();
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "changing");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "default");
     cy.wait(500);
-    cy.get(".queue-page_queue__circle__9KPM8 > :nth-child(1)").contains("head");
-    cy.get(".queue-page_queue__circle__9KPM8 > :nth-child(4)").contains("tail");
-    cy.get(".queue-page_queue__input-block__v3ccv > :nth-child(3)")
-      .as("buttonDelete")
-      .click();
-    cy
-      .get(":nth-child(1) > .circle_circle__78fES")
-      .should("have.css", "border", "4px solid rgb(210, 82, 225)"),
-      cy
-        .get(".queue-page_queue__circle__9KPM8 > :nth-child(1)")
-        .contains("head")
-        .should("not.exist");
-    cy.get(".queue-page_queue__circle__9KPM8 > :nth-child(2)")
-      .contains("head")
-      .should("exist");
-    cy.get(".queue-page_queue__circle__9KPM8 > :nth-child(3)")
-      .contains("head")
-      .should("not.exist");
-    cy.get(".queue-page_queue__circle__9KPM8 > :nth-child(4)")
-      .contains("head")
-      .should("not.exist");
-    cy.get(".queue-page_queue__circle__9KPM8 > :nth-child(1)")
-      .contains("tail")
-      .should("not.exist");
-    cy.get(".queue-page_queue__circle__9KPM8 > :nth-child(2)")
-      .contains("tail")
-      .should("not.exist");
-    cy.get(".queue-page_queue__circle__9KPM8 > :nth-child(3)")
-      .contains("tail")
-      .should("not.exist");
-    cy.get(".queue-page_queue__circle__9KPM8 > :nth-child(4)").contains("tail");
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(0).getProps("head").should("eq", "");
+    cy.getReact("Circle").nthNode(0).getProps("tail").should("eq", "");
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "");
+
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("head").should("eq", "head");
+    cy.getReact("Circle").nthNode(1).getProps("tail").should("eq", "");
+    cy.getReact("Circle").nthNode(1).getProps("letter").should("eq", "B2");
+
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(2).getProps("head").should("eq", "");
+    cy.getReact("Circle").nthNode(2).getProps("tail").should("eq", "tail");
+    cy.getReact("Circle").nthNode(2).getProps("letter").should("eq", "C3");
+
+    cy.get("@buttonDel").click();
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "changing");
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "default");
+    cy.wait(500);
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(0).getProps("head").should("eq", "");
+    cy.getReact("Circle").nthNode(0).getProps("tail").should("eq", "");
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "");
+
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("head").should("eq", "");
+    cy.getReact("Circle").nthNode(1).getProps("tail").should("eq", "");
+    cy.getReact("Circle").nthNode(1).getProps("letter").should("eq", "");
+
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(2).getProps("head").should("eq", "head");
+    cy.getReact("Circle").nthNode(2).getProps("tail").should("eq", "tail");
+    cy.getReact("Circle").nthNode(2).getProps("letter").should("eq", "C3");
   });
   it("проверка кнопки очистить", () => {
-    cy.visit("http://localhost:3000/queue");
-    cy.get("input").type("1");
-    cy.get(".queue-page_queue__input-block__v3ccv > :nth-child(2)")
-      .as("buttonAdd")
-      .click();
-    cy.wait(500);
-    cy.get("input").type("2");
+    cy.get("@inputVal").type("A1");
     cy.get("@buttonAdd").click();
-    cy.wait(500);
-    cy.get("input").type("3");
+    cy.wait(1000);
+    cy.get("@inputVal").type("A1");
     cy.get("@buttonAdd").click();
-    cy.wait(500);
-    cy.get("input").type("4");
+    cy.wait(1000);
+    cy.get("@inputVal").type("A1");
     cy.get("@buttonAdd").click();
-    cy.wait(500);
-    cy.get(":nth-child(1) > .circle_circle__78fES > .text").should(
-      "have.text",
-      "1",
-    );
-    cy.get(":nth-child(2) > .circle_circle__78fES > .text").should(
-      "have.text",
-      "2",
-    );
-    cy.get(":nth-child(3) > .circle_circle__78fES > .text").should(
-      "have.text",
-      "3",
-    );
-    cy.get(":nth-child(4) > .circle_circle__78fES > .text").should(
-      "have.text",
-      "4",
-    );
-    cy.get(":nth-child(5) > .circle_circle__78fES > .text").should(
-      "not.have.text",
-    );
-    cy.get(":nth-child(6) > .circle_circle__78fES > .text").should(
-      "not.have.text",
-    );
-    cy.get(":nth-child(7) > .circle_circle__78fES > .text").should(
-      "not.have.text",
-    );
+    cy.wait(1000);
+    cy.react("Circle").children().children().should("have.text", "A1A1A1");
 
-    cy.get(".queue-page_queue__input-block__v3ccv > :nth-child(4)").click();
-    cy.get(":nth-child(1) > .circle_circle__78fES > .text").should(
-      "not.have.text",
-    );
-    cy.get(":nth-child(2) > .circle_circle__78fES > .text").should(
-      "not.have.text",
-    );
-    cy.get(":nth-child(3) > .circle_circle__78fES > .text").should(
-      "not.have.text",
-    );
-    cy.get(":nth-child(4) > .circle_circle__78fES > .text").should(
-      "not.have.text",
-    );
-    cy.get(":nth-child(5) > .circle_circle__78fES > .text").should(
-      "not.have.text",
-    );
-    cy.get(":nth-child(6) > .circle_circle__78fES > .text").should(
-      "not.have.text",
-    );
-    cy.get(":nth-child(7) > .circle_circle__78fES > .text").should(
-      "not.have.text",
-    );
+    cy.get("@buttonClear").click();
+    cy.wait(1000);
+    cy.react("Circle").children().children().should("not.have.text", "A1A1A1");
   });
 });

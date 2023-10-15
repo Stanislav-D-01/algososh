@@ -1,71 +1,72 @@
+import "cypress-react-selector";
+import color = Mocha.reporters.Base.color;
+import { wait } from "@testing-library/user-event/dist/utils";
 describe("тестирование строки", () => {
+  beforeEach(() => {
+    cy.visit("http://localhost:3000/recursion");
+    cy.waitForReact();
+    cy.get('input[placeholder="Введите текст"]').as("inputVal");
+    cy.get("button").contains("Развернуть").parent().as("buttonRev");
+  });
   it("проверка если инпут пуст, кнопка не доступна", () => {
-    cy.visit("http://localhost:3000/");
-    cy.get('[data-test-id="link-recursion"]').click();
-    cy.get("input").should("not.have.text");
-    cy.get("button").should("be.disabled");
+    cy.get("@inputVal").should("not.have.text");
+    cy.get("@buttonRev").should("be.disabled");
+    cy.get("@inputVal").type("1");
+    cy.get("@buttonRev").should("be.enabled");
+    cy.get("@inputVal").type("{selectAll}");
+    cy.get("@inputVal").type("{del}");
+    cy.get("@buttonRev").should("be.disabled");
   });
   it("проверка отрисовки строки", () => {
-    cy.visit("http://localhost:3000/");
-    cy.get('[data-test-id="link-recursion"]').click();
-    cy.get("input").type("стр");
-    cy.get("button").should("be.enabled");
+    cy.get("@inputVal").type("стр");
+    cy.react("Circle").should("have.length", 3);
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "с");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("letter").should("eq", "т");
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(2).getProps("letter").should("eq", "р");
   });
   it("проверка разворота строки", () => {
-    cy.visit("http://localhost:3000/");
-    cy.get('[data-test-id="link-recursion"]').click();
-    cy.get("input").type("стр");
-    cy.get("button").contains("Развернуть").click();
-    cy.get(":nth-child(1) > .circle_circle__78fES")
-      .as("one")
-      .should("have.css", "border", "4px solid rgb(0, 50, 255)")
-      .contains("с");
+    cy.get("@inputVal").type("1234");
+    cy.get("@buttonRev").click();
+    cy.wait(1500);
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "1");
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "changing");
+    cy.getReact("Circle").nthNode(1).getProps("letter").should("eq", "2");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(2).getProps("letter").should("eq", "3");
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(3).getProps("letter").should("eq", "4");
+    cy.getReact("Circle").nthNode(3).getProps("state").should("eq", "changing");
+    cy.wait(1000);
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "4");
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "modified");
+    cy.getReact("Circle").nthNode(1).getProps("letter").should("eq", "2");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(2).getProps("letter").should("eq", "3");
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(3).getProps("letter").should("eq", "1");
+    cy.getReact("Circle").nthNode(3).getProps("state").should("eq", "modified");
 
-    cy.get(":nth-child(2) > .circle_circle__78fES")
-      .as("two")
-      .should("have.css", "border", "4px solid rgb(0, 50, 255)")
-      .contains("т");
-    cy.get(":nth-child(3) > .circle_circle__78fES")
-      .as("three")
-      .should("have.css", "border", "4px solid rgb(0, 50, 255)")
-      .contains("р");
+    cy.wait(1000);
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "4");
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "modified");
+    cy.getReact("Circle").nthNode(1).getProps("letter").should("eq", "2");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "changing");
+    cy.getReact("Circle").nthNode(2).getProps("letter").should("eq", "3");
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "changing");
+    cy.getReact("Circle").nthNode(3).getProps("letter").should("eq", "1");
+    cy.getReact("Circle").nthNode(3).getProps("state").should("eq", "modified");
 
-    cy.get("@one")
-      .should("have.css", "border", "4px solid rgb(210, 82, 225)")
-      .contains("с");
-    cy.get("@two")
-      .should("have.css", "border", "4px solid rgb(0, 50, 255)")
-      .contains("т");
-    cy.get("@three")
-      .should("have.css", "border", "4px solid rgb(210, 82, 225)")
-      .contains("р");
-
-    cy.get("@one")
-      .should("have.css", "border", "4px solid rgb(127, 224, 81)")
-      .contains("р");
-    cy.get("@two")
-      .should("have.css", "border", "4px solid rgb(0, 50, 255)")
-      .contains("т");
-    cy.get("@three")
-      .should("have.css", "border", "4px solid rgb(127, 224, 81)")
-      .contains("с");
-    cy.get("@one")
-      .should("have.css", "border", "4px solid rgb(127, 224, 81)")
-      .contains("р");
-    cy.get("@two")
-      .should("have.css", "border", "4px solid rgb(210, 82, 225)")
-      .contains("т");
-    cy.get("@three")
-      .should("have.css", "border", "4px solid rgb(127, 224, 81)")
-      .contains("с");
-    cy.get("@one")
-      .should("have.css", "border", "4px solid rgb(127, 224, 81)")
-      .contains("р");
-    cy.get("@two")
-      .should("have.css", "border", "4px solid rgb(127, 224, 81)")
-      .contains("т");
-    cy.get("@three")
-      .should("have.css", "border", "4px solid rgb(127, 224, 81)")
-      .contains("с");
+    cy.wait(1500);
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "4");
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "modified");
+    cy.getReact("Circle").nthNode(1).getProps("letter").should("eq", "3");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "modified");
+    cy.getReact("Circle").nthNode(2).getProps("letter").should("eq", "2");
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "modified");
+    cy.getReact("Circle").nthNode(3).getProps("letter").should("eq", "1");
+    cy.getReact("Circle").nthNode(3).getProps("state").should("eq", "modified");
   });
 });

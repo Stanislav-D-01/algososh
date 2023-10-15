@@ -1,88 +1,110 @@
-import { wait } from "@testing-library/user-event/dist/utils";
-
+import "cypress-react-selector";
 describe("тестирование стека", () => {
-  it("проверка если инпут пуст, кнопка не доступна", () => {
+  beforeEach(() => {
     cy.visit("http://localhost:3000/stack");
-    cy.get("input").should("not.have.text");
-    cy.get(".stack-pahe_stack__input-block__z5tuZ > :nth-child(2)").should(
-      "be.disabled",
-    );
+    cy.waitForReact();
+    cy.get('input[placeholder="Введите текст"]').as("inputVal");
+    cy.get("button").contains("Добавить").parent().as("buttonAdd");
+    cy.get("button").contains("Удалить").parent().as("buttonDel");
+    cy.get("button").contains("Очистить").parent().as("buttonClear");
+  });
+  it("проверка если инпут пуст, кнопка не доступна", () => {
+    cy.get("@inputVal").should("not.have.text");
+    cy.get("@buttonAdd").should("be.disabled");
+    cy.get("@inputVal").type("1");
+    cy.get("@buttonAdd").should("be.enabled");
+    cy.get("@inputVal").type("{selectAll}");
+    cy.get("@inputVal").type("{del}");
+    cy.get("@buttonAdd").should("be.disabled");
   });
 
   it("Проверка правильности добавления элемента в стек.", () => {
-    cy.visit("http://localhost:3000/stack");
-    cy.get("input").type("A");
-    cy.get(".stack-pahe_stack__input-block__z5tuZ > :nth-child(2)").click();
-    cy.get(":nth-child(1) > .circle_circle__78fES")
-      .as("one")
-      .should("have.css", "border", "4px solid rgb(210, 82, 225)")
-      .contains("A");
-    cy.get("@one")
-      .should("have.css", "border", "4px solid rgb(0, 50, 255)")
-      .contains("A");
+    cy.get("@inputVal").type("A1");
+    cy.get("@buttonAdd").click();
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "changing");
+    cy.wait(500);
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(0).getProps("head").should("eq", "top");
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "A1");
 
-    cy.get("input").type("B");
-    cy.get(".stack-pahe_stack__input-block__z5tuZ > :nth-child(2)").click();
-    cy.get(":nth-child(2) > .circle_circle__78fES")
-      .as("two")
-      .should("have.css", "border", "4px solid rgb(210, 82, 225)")
-      .contains("B");
-    cy.get("@two")
-      .should("have.css", "border", "4px solid rgb(0, 50, 255)")
-      .contains("B");
+    cy.get("@inputVal").type("B2");
+    cy.get("@buttonAdd").click();
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "changing");
+    cy.wait(500);
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(0).getProps("head").should("eq", "");
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "A1");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("head").should("eq", "top");
+    cy.getReact("Circle").nthNode(1).getProps("letter").should("eq", "B2");
 
-    cy.get("input").type("C");
-    cy.get(".stack-pahe_stack__input-block__z5tuZ > :nth-child(2)").click();
-    cy.get(":nth-child(3) > .circle_circle__78fES")
-      .as("three")
-      .should("have.css", "border", "4px solid rgb(210, 82, 225)")
-      .contains("C");
-    cy.get("@three")
-      .should("have.css", "border", "4px solid rgb(0, 50, 255)")
-      .contains("C");
+    cy.get("@inputVal").type("C3");
+    cy.get("@buttonAdd").click();
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "changing");
+    cy.wait(500);
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(0).getProps("head").should("eq", "");
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "A1");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("head").should("eq", "");
+    cy.getReact("Circle").nthNode(1).getProps("letter").should("eq", "B2");
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(2).getProps("head").should("eq", "top");
+    cy.getReact("Circle").nthNode(2).getProps("letter").should("eq", "C3");
   });
   it("Проверка правильности удаление элемента из стека", () => {
-    cy.visit("http://localhost:3000/stack");
-    cy.get("input").type("A");
-    cy.get(".stack-pahe_stack__input-block__z5tuZ > :nth-child(2)").click();
-    cy.wait(500);
-    cy.get("input").type("B");
-    cy.get(".stack-pahe_stack__input-block__z5tuZ > :nth-child(2)").click();
-    cy.wait(500);
-    cy.get("input").type("C");
-    cy.get(".stack-pahe_stack__input-block__z5tuZ > :nth-child(2)").click();
-    cy.wait(500);
-    cy.get(".stack-pahe_stack__input-block__z5tuZ > :nth-child(3)").click();
-
-    cy.get(":nth-child(1) > .circle_circle__78fES")
-      .should("have.css", "border", "4px solid rgb(0, 50, 255)")
-      .contains("A");
-    cy.get(":nth-child(2) > .circle_circle__78fES")
-      .should("have.css", "border", "4px solid rgb(0, 50, 255)")
-      .contains("B");
-    cy.get(":nth-child(3) > .circle_circle__78fES")
-      .should("have.css", "border", "4px solid rgb(210, 82, 225)")
-      .contains("C");
-    cy.get(":nth-child(2) > .circle_circle__78fES")
-      .should("have.css", "border", "4px solid rgb(210, 82, 225)")
-      .contains("B");
-    cy.get(":nth-child(3) > .circle_circle__78fES").should("not.exist");
+    cy.get("@inputVal").type("A1");
+    cy.get("@buttonAdd").click();
+    cy.wait(1000);
+    cy.get("@inputVal").type("B2");
+    cy.get("@buttonAdd").click();
+    cy.wait(1000);
+    cy.get("@inputVal").type("C3");
+    cy.get("@buttonAdd").click();
+    cy.wait(1000);
+    cy.react("Circle").should("have.length", 3);
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "default");
+    cy.get("@buttonDel").click();
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(2).getProps("state").should("eq", "changing");
+    cy.wait(1000);
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(0).getProps("head").should("eq", "");
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "A1");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("head").should("eq", "top");
+    cy.getReact("Circle").nthNode(1).getProps("letter").should("eq", "B2");
+    cy.react("Circle").eq(2).should("not.exist");
+    cy.react("Circle").should("have.length", 2);
+    cy.get("@buttonDel").click();
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(1).getProps("state").should("eq", "changing");
+    cy.wait(1000);
+    cy.getReact("Circle").nthNode(0).getProps("state").should("eq", "default");
+    cy.getReact("Circle").nthNode(0).getProps("head").should("eq", "top");
+    cy.getReact("Circle").nthNode(0).getProps("letter").should("eq", "A1");
+    cy.react("Circle").eq(1).should("not.exist");
+    cy.react("Circle").should("have.length", 1);
   });
 
   it("Проверка очистки стека", () => {
-    cy.visit("http://localhost:3000/stack");
-    cy.get("input").type("A");
-    cy.get(".stack-pahe_stack__input-block__z5tuZ > :nth-child(2)").click();
-    cy.wait(500);
-    cy.get("input").type("B");
-    cy.get(".stack-pahe_stack__input-block__z5tuZ > :nth-child(2)").click();
-    cy.wait(500);
-    cy.get("input").type("C");
-    cy.get(".stack-pahe_stack__input-block__z5tuZ > :nth-child(2)").click();
-    cy.wait(500);
-    cy.get(".circle_circle__78fES").should("have.length", 3);
-    cy.get(".stack-pahe_stack__input-block__z5tuZ > :nth-child(4)").click();
-    cy.wait(500);
-    cy.get(".circle_circle__78fES").should("have.length", 0);
+    cy.get("@inputVal").type("A1");
+    cy.get("@buttonAdd").click();
+    cy.wait(1000);
+    cy.get("@inputVal").type("D1");
+    cy.get("@buttonAdd").click();
+    cy.wait(1000);
+    cy.get("@inputVal").type("C1");
+    cy.get("@buttonAdd").click();
+    cy.wait(1000);
+    cy.react("Circle").should("have.length", 3);
+    cy.get("@buttonClear").click();
+    cy.react("Circle").should("not.exist");
   });
 });

@@ -15,15 +15,28 @@ describe("Тестирование алгоритмов сортировки п�
     expect(sort).toStrictEqual([]);
   });
   test("массив из нескольких элементов", async () => {
-    const sort = await bubbleSorting(
+    const sortOne = await bubbleSorting(
       [
-        { val: 5, type: ElementStates.Default },
         { val: 1, type: ElementStates.Default },
+        { val: 5, type: ElementStates.Default },
         { val: 10, type: ElementStates.Default },
       ],
       "Asc",
     );
-    expect(sort).toStrictEqual([
+    const sortTwo = await bubbleSorting(
+      [
+        { val: 10, type: ElementStates.Default },
+        { val: 5, type: ElementStates.Default },
+        { val: 1, type: ElementStates.Default },
+      ],
+      "Asc",
+    );
+    expect(sortOne).toStrictEqual([
+      { val: 1, type: ElementStates.Modified },
+      { val: 5, type: ElementStates.Modified },
+      { val: 10, type: ElementStates.Modified },
+    ]);
+    expect(sortTwo).toStrictEqual([
       { val: 1, type: ElementStates.Modified },
       { val: 5, type: ElementStates.Modified },
       { val: 10, type: ElementStates.Modified },
@@ -46,13 +59,26 @@ describe("Тестирование алгоритмов сортировки п�
   test("массив из нескольких элементов", async () => {
     const sort = await bubbleSorting(
       [
-        { val: 5, type: ElementStates.Default },
         { val: 1, type: ElementStates.Default },
+        { val: 5, type: ElementStates.Default },
         { val: 10, type: ElementStates.Default },
       ],
       "Desc",
     );
+    const sortTwo = await bubbleSorting(
+      [
+        { val: 10, type: ElementStates.Default },
+        { val: 5, type: ElementStates.Default },
+        { val: 1, type: ElementStates.Default },
+      ],
+      "Desc",
+    );
     expect(sort).toStrictEqual([
+      { val: 10, type: ElementStates.Modified },
+      { val: 5, type: ElementStates.Modified },
+      { val: 1, type: ElementStates.Modified },
+    ]);
+    expect(sortTwo).toStrictEqual([
       { val: 10, type: ElementStates.Modified },
       { val: 5, type: ElementStates.Modified },
       { val: 1, type: ElementStates.Modified },

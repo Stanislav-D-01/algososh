@@ -1,5 +1,8 @@
 import { getFibonacci } from "./func-fibonacci";
 
 test("проверка Фибоначи", () => {
-  expect(getFibonacci(5)).toStrictEqual([1, 1, 2, 3, 5, 8]);
+  expect(getFibonacci(19)).toStrictEqual([
+    1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584,
+    4181, 6765,
+  ]);
 });

@@ -54,6 +54,7 @@
     "@types/react-test-renderer": "^18.0.3",
     "@types/uuid": "^9.0.4",
     "cypress": "^13.3.0",
+    "cypress-react-selector": "^3.0.0",
     "eslint-plugin-cypress": "^2.15.1",
     "mocha": "^10.2.0",
     "prettier": "3.0.3",
