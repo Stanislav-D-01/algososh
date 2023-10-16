@@ -40,7 +40,7 @@ export const ListPage: React.FC = () => {
   });
 
   useEffect(() => {
-    const randomEl = randomArr(3, 6, 0, 9999);
+    const randomEl = randomArr(4, 4, 0, 9999);
     randomEl.forEach((el) => {
       list.append(String(el.val));
     });
@@ -184,7 +184,7 @@ export const ListPage: React.FC = () => {
     arrayJSX: JSX.Element[],
     value: string,
     list: ILinkedList<string>,
-    index: number
+    index: number,
   ) => {
     if (index === arrayJSX.length - 1) {
       arrayJSX[index] = (
@@ -233,7 +233,7 @@ export const ListPage: React.FC = () => {
     arrayJSX: JSX.Element[],
 
     list: ILinkedList<string>,
-    index: number
+    index: number,
   ) => {
     if (index === arrayJSX.length - 1) {
       arrayJSX[index] = (
@@ -283,7 +283,7 @@ export const ListPage: React.FC = () => {
     list: ILinkedList<string>,
     index: number,
     isDel: boolean,
-    value?: string
+    value?: string,
   ) => {
     const length = arrayJSX.length;
     const endElement = isDel ? index + 1 : index;

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Circle } from "../ui/circle/circle";
 import { ElementStates } from "../../types/element-states";
 import { v4 as uuidv4 } from "uuid";
+import { reverseString } from "./func-string";
 
 type TInpArray = {
   state: ElementStates;
@@ -34,46 +35,47 @@ export const StringComponent: React.FC = () => {
   const buttonClick = () => {
     setLoader(true);
     setIsCircle(true);
-    circleArray && reverse(circleArray);
+    circleArray && input && reverse(input, circleArray);
   };
 
-  const reverse = (arrCircle: TInpArray[]) => {
-    const length = arrCircle.length;
+  const reverse = (str: string, circleArray: TInpArray[]) => {
+    const arr = Array.from(str);
+    const reverseArr = reverseString(arr);
     let start = 0;
-    let end = length - 1;
-    const mid = Math.floor(length / 2);
-    let temp: string;
+    let end = reverseArr.length - 1;
 
-    const changing = setInterval(() => {
-      arrCircle[start].state = ElementStates.Changing;
-      arrCircle[end].state = ElementStates.Changing;
+    if (str.length === circleArray.length) {
+      const changing = setInterval(() => {
+        circleArray[start].state = ElementStates.Changing;
+        circleArray[end].state = ElementStates.Changing;
 
-      setCircleArray(arrCircle);
-      circleArray && renderCircle(circleArray);
+        setCircleArray(circleArray);
 
-      setTimeout(() => {
-        temp = arrCircle[start].value;
-        arrCircle[start].value = arrCircle[end].value;
-        arrCircle[end].value = temp;
-        arrCircle[start].state = ElementStates.Modified;
-        arrCircle[end].state = ElementStates.Modified;
-        start++;
-        end--;
-        setCircleArray(arrCircle);
         circleArray && renderCircle(circleArray);
-        if (start > end) setLoader(false);
-      }, 1000);
 
-      if (start + 1 > end - 1) {
-        clearInterval(changing);
-      }
-    }, 1500);
+        setTimeout(() => {
+          circleArray[start].value = reverseArr[start];
+          circleArray[end].value = reverseArr[end];
+          circleArray[start].state = ElementStates.Modified;
+          circleArray[end].state = ElementStates.Modified;
+          start++;
+          end--;
+          setCircleArray(circleArray);
+          circleArray && renderCircle(circleArray);
+          if (start > end) setLoader(false);
+        }, 1000);
+
+        if (start + 1 > end - 1) {
+          clearInterval(changing);
+        }
+      }, 1500);
+    }
   };
 
   const createArrayCircle = (input: string) => {
     const inputArray = Array.from(input);
     if (inputArray) {
-      let arrayCircle: any = inputArray.map((el) => {
+      let arrayCircle: TInpArray[] = inputArray.map((el) => {
         return { state: ElementStates.Default, value: el };
       });
 

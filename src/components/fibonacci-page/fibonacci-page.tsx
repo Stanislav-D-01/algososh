@@ -30,7 +30,7 @@ export const FibonacciPage: React.FC = () => {
     let arrForRender: JSX.Element[] = [];
     const interval = setInterval(() => {
       arrForRender.push(
-        <Circle key={uuid()} letter={String(arr[i])} index={i} />
+        <Circle key={uuid()} letter={String(arr[i])} index={i} />,
       );
       setRenderEl([...arrForRender]);
 

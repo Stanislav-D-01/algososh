@@ -25,7 +25,7 @@ export type TStateButton = {
 
 export const SortingPage: React.FC = () => {
   const [radioCheck, setRadioCheck] = useState<"Bubble" | "Sample" | null>(
-    null
+    null,
   );
   const [array, setArray] = useState<TRenderElement[] | null>(null);
   const [columns, setColumns] = useState<JSX.Element[] | null>(null);
@@ -57,7 +57,7 @@ export const SortingPage: React.FC = () => {
       array && selectionAscending(array, renderElements, setStateButton);
     }
     if (radioCheck === "Bubble") {
-      array && bubbleSorting(array, renderElements, "Asc", setStateButton);
+      array && bubbleSorting(array, "Asc", renderElements, setStateButton);
     }
   };
 
@@ -66,7 +66,7 @@ export const SortingPage: React.FC = () => {
       array && selectionDescending(array, renderElements, setStateButton);
     }
     if (radioCheck === "Bubble") {
-      array && bubbleSorting(array, renderElements, "Desc", setStateButton);
+      array && bubbleSorting(array, "Desc", renderElements, setStateButton);
     }
   };
 
